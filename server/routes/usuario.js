@@ -1,26 +1,26 @@
 const express = require('express');
 
+const bcrypt = require('bcrypt');
+const _ = require('underscore');
+
 const Usuario = require('../models/usuario');
+const { verificaToken } = require('../middlewares/autenticacion');
 
 const app = express();
-
-const bcrypt = require('bcrypt');
-
-const _ = require('underscore');
 
 
 app.get('/usuario', function(req, res) {
 
-    //
+
     let desde = req.query.desde || 0;
     desde = Number(desde); //transformó el String a un Número
+
     let limite = req.query.limite || 5;
     limite = Number(limite);
 
-
-    Usuario.find({ estado: true }, 'nombre ') // aqui se muestran los campos que estaran en la vista
+    Usuario.find({}, 'nombre email role estado google img') // aqui se muestran los campos que estaran en la vista
         .skip(desde) //salta los primeros (x) en la lista y muestra los sgts
-        .limit(5) //limita el numero de usuarios en la lista de la vista
+        .limit(limite) //limita el numero de usuarios en la lista de la vista
         .exec((err, usuarios) => { //ejecutalo
 
             if (err) {
@@ -30,7 +30,7 @@ app.get('/usuario', function(req, res) {
                 });
             };
 
-            Usuario.count({ estado: true }, (err, conteo) => {
+            Usuario.count({}, (err, conteo) => {
 
                 res.json({
                     ok: true,
@@ -38,13 +38,12 @@ app.get('/usuario', function(req, res) {
                     cuantos: conteo
                 });
 
-            })
-
+            });
             //  usuarioDB.password = null; //Esto sirve para que en la vista
             //No se vea la contraseña, ya que el usuario no necesita ver la 
             //información de la contraseña que se encriptó
+        });
 
-        })
 });
 
 app.post('/usuario', function(req, res) {
