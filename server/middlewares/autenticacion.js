@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 // =====================
 // Verificar Token
 // =====================
+//El 'next' lo que hace es continuar con la ejecucion del programa
+
 let verificaToken = (req, res, next) => {
 
     let token = req.get('token');
@@ -23,15 +25,33 @@ let verificaToken = (req, res, next) => {
 
         req.usuario = decoded.usuario;
         next();
-    })
+    });
 
 
 
 };
 
+let verificaAdmin_Role = (req, res, next) => {
+
+    let usuario = req.usuario;
+    if (usuario.role === 'ADMIN_ROLE') {
+        next();
+    } else {
+        return res.json({
+            ok: false,
+            err: {
+                message: 'El usuario no es administrador'
+            }
+        })
+    }
+
+
+}
+
 
 
 
 module.exports = {
-    verificaToken
+    verificaToken,
+    verificaAdmin_Role
 }
