@@ -100,8 +100,7 @@ app.get('/producto/buscar/:termino', verificaToken, (req, res) => {
             })
 
         })
-})
-
+});
 
 
 
